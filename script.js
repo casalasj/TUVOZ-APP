@@ -6,7 +6,8 @@ function toggleDarkMode() {
 }
 function toggleColorblindMode() { document.body.classList.toggle('colorblind-mode'); }
 
-// --- 2. SÍNTESIS DE VOZ ---
+// --- 2. SÍNTESIS DE VOZ (VERSIÓN LOCAL DIRECTA) ---
+// ⚠️ PEGA TU API KEY DE ELEVENLABS AQUÍ ADENTRO DE LAS COMILLAS
 const ELEVENLABS_API_KEY = 'sk_fba7cc72a408c68f8130c345cefa201c80be1535c2633f92'; 
 
 async function speakText() {
@@ -38,7 +39,7 @@ async function speakText() {
             audio.onended = function() { clearText(); URL.revokeObjectURL(audioUrl); };
             audio.play();
         } catch (error) {
-            alert('Error al generar la voz. Verifica tu conexión y tu API Key.');
+            alert('Error al generar la voz. Verifica tu conexión y que hayas puesto tu API Key en el código.');
         } finally {
             btnHablar.innerHTML = textoOriginal;
             btnHablar.disabled = false;
@@ -63,8 +64,10 @@ if (SpeechRecognition) {
     recognition.onstart = function() {
         isListening = true;
         statusPill.textContent = 'Escuchando...';
+        statusPill.style.backgroundColor = 'var(--status-active)';
+        statusPill.style.color = 'var(--status-active-text)';
         statusPill.classList.add('active');
-        if(navigator.vibrate) navigator.vibrate(100); // Feedback inicio
+        if(navigator.vibrate) navigator.vibrate(100); 
     };
 
     recognition.onresult = function(event) {
@@ -77,26 +80,78 @@ if (SpeechRecognition) {
             recognizedTextArea.scrollTop = recognizedTextArea.scrollHeight;
         }
     };
-    recognition.onerror = function() { stopListening(); };
+    
+    // Diagnóstico de errores mejorado
+    recognition.onerror = function(event) { 
+        console.error("Error de reconocimiento:", event.error);
+        
+        let mensajeError = "Error";
+        if (event.error === 'not-allowed') mensajeError = "Micrófono bloqueado por Chrome";
+        if (event.error === 'no-speech') mensajeError = "No se detectó voz";
+        if (event.error === 'network') mensajeError = "Sin internet";
+        
+        statusPill.textContent = mensajeError;
+        statusPill.style.backgroundColor = '#fecaca'; // Fondo rojo
+        statusPill.style.color = '#991b1b'; // Texto rojo
+        
+        isListening = false;
+        recognition.stop();
+        
+        setTimeout(() => {
+            statusPill.textContent = 'Inactivo';
+            statusPill.style.backgroundColor = 'var(--status-inactive)';
+            statusPill.style.color = 'var(--status-inactive-text)';
+            statusPill.classList.remove('active');
+        }, 4000);
+    };
+    
     recognition.onend = function() {
         if(isListening) recognition.start();
         else {
             statusPill.textContent = 'Inactivo';
+            statusPill.style.backgroundColor = 'var(--status-inactive)';
+            statusPill.style.color = 'var(--status-inactive-text)';
             statusPill.classList.remove('active');
         }
     };
 }
-function startListening() { if (recognition && !isListening) recognition.start(); }
+function startListening() { 
+    // 1. Esto nos confirma que el botón sí está respondiendo al clic
+    console.log("Botón presionado. Revisando el micrófono...");
+    
+    // 2. Revisamos si Chrome cargó el módulo de voz
+    if (!recognition) {
+        alert("Chrome bloqueó por completo la herramienta de voz. Esto ocurre al abrir archivos HTML directamente (file://).");
+        return;
+    }
+    
+    // 3. Intentamos encender el micrófono
+    if (!isListening) { 
+        try {
+            recognition.start();
+            console.log("El comando de inicio se envió a Chrome.");
+        } catch(error) {
+            alert("Chrome bloqueó el inicio del micrófono. Razón técnica: " + error.message);
+        }
+    } 
+}
 function stopListening() {
     if (recognition && isListening) {
         isListening = false;
         recognition.stop();
         statusPill.textContent = 'Inactivo';
+        statusPill.style.backgroundColor = 'var(--status-inactive)';
+        statusPill.style.color = 'var(--status-inactive-text)';
         statusPill.classList.remove('active');
-        if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Feedback fin
+        if(navigator.vibrate) navigator.vibrate([100, 50, 100]); 
     }
 }
 function copyToResponse() { document.getElementById('textToSpeak').value += (document.getElementById('textToSpeak').value ? ' ' : '') + recognizedTextArea.value; }
+
+// Función para limpiar texto escuchado
+function clearRecognizedText() { 
+    document.getElementById('recognizedText').value = ''; 
+}
 
 // --- 4. FUNCIONALIDADES AVANZADAS ---
 
@@ -136,11 +191,10 @@ async function toggleNoiseAlert() {
                 for(let i=0; i<dataArray.length; i++) sum += dataArray[i];
                 let average = sum / dataArray.length;
                 
-                // Si el ruido supera el umbral (100)
                 if(average > 100) {
                     document.body.classList.add('flash-alert');
                     if(navigator.vibrate) navigator.vibrate([300, 100, 300]);
-                    setTimeout(() => document.body.classList.remove('flash-alert'), 3000); // Pausa antes de la siguiente alerta
+                    setTimeout(() => document.body.classList.remove('flash-alert'), 3000); 
                 }
                 animationId = requestAnimationFrame(detectNoise);
             }
@@ -178,7 +232,7 @@ function draw(e) {
     if (!painting) return;
     e.preventDefault();
     let clientX = e.clientX || e.touches[0].clientX;
-    let clientY = (e.clientY || e.touches[0].clientY) - 60; // Ajuste por el header
+    let clientY = (e.clientY || e.touches[0].clientY) - 60; 
     ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
     ctx.lineTo(clientX, clientY); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(clientX, clientY);
@@ -218,10 +272,10 @@ function addToHistory(text) {
     });
 }
 
-// NUEVO: Función para limpiar el historial manualmente
+// Limpiar historial
 function clearHistory() {
-    speechHistory = []; // Vaciamos el arreglo de historial
-    document.getElementById('historyList').innerHTML = ''; // Limpiamos el contenedor en el HTML
+    speechHistory = []; 
+    document.getElementById('historyList').innerHTML = ''; 
 }
 
 const commonWords = ["por favor", "gracias", "necesito", "ayuda", "baño", "comer", "tomar", "agua", "duele", "mucho", "poco", "dónde está", "quiero", "ir", "casa"];
@@ -247,7 +301,6 @@ window.addEventListener('devicemotion', (e) => {
 });
 
 // --- 5. ATAJOS RÁPIDOS, GÉNERO Y FAVORITOS ---
-// Cargar favoritos guardados en el dispositivo
 let misFavoritos = JSON.parse(localStorage.getItem('tuvoz_favoritos')) || [];
 
 const shortcutsData = {
@@ -528,12 +581,10 @@ function renderShortcuts(category) {
         const btn = document.createElement('button');
         btn.className = 'shortcut-btn'; btn.innerHTML = `<span>${item.icon}</span> ${displayText}`;
         
-        // Clic normal: añadir al texto
         btn.onclick = () => { document.getElementById('textToSpeak').value += (document.getElementById('textToSpeak').value ? ' ' : '') + displayText; };
         
-        // Clic derecho o Mantener Presionado (Móvil): Favoritos
         btn.oncontextmenu = (e) => {
-            e.preventDefault(); // Evita que salga el menú del navegador
+            e.preventDefault(); 
             if (category !== "⭐ Favoritos") {
                 if(confirm(`¿Añadir "${item.text}" a Favoritos?`)) {
                     misFavoritos.push(item);
