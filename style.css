@@ -1,0 +1,109 @@
+:root {
+    --bg-color: #f4f6f9; --card-bg: #ffffff; --text-main: #333333; --text-muted: #6c757d;
+    --primary: #4f46e5; --primary-hover: #4338ca; --secondary: #e5e7eb; --secondary-hover: #d1d5db;
+    --accent-cyan: #06b6d4; --accent-pink: #ec4899; --border-color: #e5e7eb;
+    --status-inactive: #f3f4f6; --status-inactive-text: #9ca3af; --status-active: #def7ec; --status-active-text: #03543f;
+}
+
+body.dark-mode {
+    --bg-color: #111827; --card-bg: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af;
+    --primary: #6366f1; --primary-hover: #4f46e5; --secondary: #374151; --secondary-hover: #4b5563;
+    --border-color: #374151; --status-inactive: #374151; --status-inactive-text: #9ca3af;
+}
+
+body.colorblind-mode {
+    --accent-cyan: #0072B2; --accent-pink: #D55E00; --primary: #000000; --primary-hover: #333333;
+    --card-bg: #ffffff; --bg-color: #e0e0e0; --text-main: #000000; --border-color: #000000;
+    font-weight: 600; letter-spacing: 0.5px;
+}
+body.colorblind-mode .card, body.colorblind-mode button, body.colorblind-mode textarea, body.colorblind-mode select { border: 2px solid #000 !important; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.3s ease; padding: 20px; }
+
+/* Cabecera */
+header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 20px; flex-wrap: wrap; gap: 15px; }
+.logo { font-size: 24px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+.settings-btn { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.btn-toggle { background: var(--secondary); color: var(--text-main); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background 0.2s; display: flex; align-items: center; gap: 6px; }
+.btn-toggle:hover { background: var(--secondary-hover); }
+
+/* S.O.S Button */
+.btn-sos { background: #dc2626; color: white; animation: pulse 2s infinite; }
+.btn-sos:hover { background: #b91c1c; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
+
+/* Filtro de Género */
+.gender-toggle { display: flex; background: var(--secondary); border-radius: 8px; overflow: hidden; }
+.btn-gender { display: flex; align-items: center; gap: 6px; background: transparent; color: var(--text-main); border: none; padding: 8px 12px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.2s; }
+.btn-gender.active { background: var(--primary); color: white; }
+.btn-gender:hover:not(.active) { background: var(--secondary-hover); }
+
+/* Contenedor Principal */
+.main-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: start; }
+@media (max-width: 850px) { .main-container { grid-template-columns: 1fr; } }
+
+/* Tarjetas */
+.card { background: var(--card-bg); border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 600; font-size: 16px; }
+.card-header i { color: var(--primary); margin-right: 8px; }
+
+label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; }
+select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-main); font-size: 15px; margin-bottom: 12px; resize: none; outline: none; }
+select:focus, textarea:focus { border-color: var(--primary); }
+textarea { height: 80px; }
+
+.status-pill { font-size: 11px; padding: 4px 8px; border-radius: 20px; background: var(--status-inactive); color: var(--status-inactive-text); font-weight: 600; }
+.status-pill.active { background: var(--status-active); color: var(--status-active-text); }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; color: white; transition: opacity 0.2s; }
+.btn:hover { opacity: 0.9; }
+.btn-primary { background: var(--primary); min-width: 120px;}
+.btn-icon { flex: none; width: 40px; background: var(--secondary); color: var(--text-main); }
+.btn-secondary-icon { flex: none; width: 40px; background: var(--primary); color: white; border-radius: 8px; border: none; cursor: pointer; }
+.btn-warning { flex: none; width: 45px; background: #f59e0b; color: white; }
+.btn-warning:hover { background: #d97706; }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); width: 100%; margin-bottom: 12px; padding: 8px; }
+.btn-outline:hover { background: var(--primary); color: white; }
+.btn-cyan { background: var(--accent-cyan); }
+.btn-pink { background: var(--accent-pink); }
+
+.speed-control { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.speed-control label { margin-bottom: 0; white-space: nowrap; }
+.speed-control input[type="range"] { flex: 1; cursor: pointer; accent-color: var(--primary); }
+
+.suggestions-row { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 4px; min-height: 28px;}
+.suggestions-row::-webkit-scrollbar { height: 4px; }
+.suggestions-row::-webkit-scrollbar-thumb { background: var(--secondary-hover); border-radius: 4px; }
+.suggestion-chip { background: var(--secondary); padding: 4px 10px; border-radius: 15px; font-size: 12px; cursor: pointer; white-space: nowrap; border: none; color: var(--text-main); font-weight: 500;}
+
+.history-section { margin-bottom: 12px; }
+.history-title { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+.history-list { display: flex; flex-direction: column; gap: 4px; }
+.history-item { background: var(--bg-color); padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid var(--border-color); color: var(--text-main); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+/* Atajos Rápidos */
+.shortcuts-section { max-width: 1200px; margin: 20px auto; background: var(--card-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+.category-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
+.btn-filter { background: var(--secondary); color: var(--text-main); border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+.btn-filter.active { background: var(--primary); color: white; }
+
+.shortcuts-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.shortcut-btn { background: var(--bg-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 20px; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; transition: all 0.2s; }
+.shortcut-btn:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+/* --- MODALS (Letrero y Pizarra) --- */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 1000; flex-direction: column; }
+.close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; z-index: 1001; }
+#letreroText { color: white; font-size: 8vw; text-align: center; margin: auto; padding: 20px; word-wrap: break-word; font-weight: 800; line-height: 1.2;}
+#pizarraCanvas { background: white; flex: 1; touch-action: none; cursor: crosshair; }
+.pizarra-header { padding: 15px; background: #222; display: flex; justify-content: space-between; align-items: center; }
+
+/* Animación Alerta de Ruido */
+.flash-alert { animation: flashRed 0.4s alternate 6; }
+@keyframes flashRed { from { background-color: var(--bg-color); } to { background-color: #ef4444; } }
+
+/* Botón para borrar historial */
+.btn-clear-history { background: transparent; color: var(--text-muted); border: none; cursor: pointer; font-size: 13px; transition: color 0.2s; padding: 2px 5px; }
+.btn-clear-history:hover { color: #dc2626; }
